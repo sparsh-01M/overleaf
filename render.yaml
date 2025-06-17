@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: overleaf
+    env: docker
+    region: oregon
+    plan: starter
+    dockerfilePath: ./develop/Dockerfile
+    rootDir: ./develop
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: OVERLEAF_MONGO_URL
+        fromDatabase:
+          name: overleaf-mongodb
+          property: connectionString
+      - key: OVERLEAF_REDIS_HOST
+        fromService:
+          type: redis
+          name: overleaf-redis
+          property: host
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: overleaf-redis
+          property: host
+      - key: OVERLEAF_APP_NAME
+        value: Overleaf Community Edition
+      - key: EMAIL_CONFIRMATION_DISABLED
+        value: true
+      - key: ENABLED_LINKED_FILE_TYPES
+        value: project_file,project_output_file
+      - key: ENABLE_CONVERSIONS
+        value: true
+
+  - type: redis
+    name: overleaf-redis
+    region: oregon
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+
+databases:
+  - name: overleaf-mongodb
+    region: oregon
+    plan: starter
+    databaseName: overleaf 

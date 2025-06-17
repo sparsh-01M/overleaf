@@ -4,7 +4,7 @@ services:
         restart: always
         # Server Pro users:
         # image: quay.io/sharelatex/sharelatex-pro
-        image: sharelatex/sharelatex
+        image: acbalingit/overleaf
         container_name: sharelatex
         depends_on:
             mongo:
@@ -39,6 +39,15 @@ services:
 
             # Disables email confirmation requirement
             EMAIL_CONFIRMATION_DISABLED: 'true'
+
+            # Skip MongoDB version check
+            OVERLEAF_SKIP_MONGODB_VERSION_CHECK: 'true'
+            OVERLEAF_DISABLE_MONGODB_VERSION_CHECK: 'true'
+            
+            # Additional bypass variables
+            OVERLEAF_SKIP_DB_CHECK: 'true'
+            OVERLEAF_DISABLE_DB_CHECK: 'true'
+            OVERLEAF_SKIP_MONGODB_COMPATIBILITY_CHECK: 'true'
 
             ## Set for SSL via nginx-proxy
             #VIRTUAL_HOST: 103.112.212.22
@@ -106,7 +115,8 @@ services:
 
     mongo:
         restart: always
-        image: mongo:6.0
+        image: mongo:4.4
+        platform: linux/amd64
         container_name: mongo
         command: '--replSet overleaf'
         volumes:
@@ -119,7 +129,7 @@ services:
           # This override is not needed when running the setup after starting up mongo.
           - mongo:127.0.0.1
         healthcheck:
-            test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
+            test: echo 'db.stats().ok' | mongo localhost:27017/test --quiet
             interval: 10s
             timeout: 10s
             retries: 5
