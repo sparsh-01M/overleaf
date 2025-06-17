@@ -4,8 +4,8 @@ services:
     env: docker
     region: oregon
     plan: starter
-    dockerfilePath: ./develop/Dockerfile
-    rootDir: ./develop
+    dockerfilePath: ./Dockerfile
+    rootDir: ./
     envVars:
       - key: NODE_ENV
         value: production
